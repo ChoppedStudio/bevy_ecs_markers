@@ -1,5 +1,6 @@
+use bevy_macro_utils::BevyManifest;
 use proc_macro::TokenStream;
-use quote::{quote, quote_spanned};
+use quote::{format_ident, quote, quote_spanned};
 use syn::{self, spanned::Spanned};
 
 #[proc_macro_derive(EntityMarker)]
@@ -14,14 +15,16 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
 
     let new_data = match input.data {
         syn::Data::Struct(_) => {
+            let mut entity_path = bevy_ecs_path();
+            entity_path.segments.push(format_ident!("entity").into());
+            entity_path.segments.push(format_ident!("Entity").into());
             quote! {
                 fn new_data() -> bevy_ecs_markers::MarkerData<Self>
                     where
                         Self: Sized
                 {
                     // TODO: use Entity::PLACEHOLDER when released
-                    // TODO: is there a better path to `bevy_ecs::entity::Entity`?
-                    bevy_ecs_markers::MarkerData::new(bevy_ecs_markers::MarkerDataType::Single(bevy_ecs::entity::Entity::from_raw(u32::MAX)))
+                    bevy_ecs_markers::MarkerData::new(bevy_ecs_markers::MarkerDataType::Single(#entity_path::from_raw(u32::MAX)))
                 }
             }
         }
@@ -51,4 +54,8 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
         }
     }
     .into()
+}
+
+pub(crate) fn bevy_ecs_path() -> syn::Path {
+    BevyManifest::default().get_path("bevy_ecs")
 }
