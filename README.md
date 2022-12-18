@@ -7,6 +7,18 @@ Adds the support for marking entites and fetching them in queries
 View the whole example [here](examples/markers.rs)
 
 ```rust
+#[derive(EntityMarker, Hash, PartialEq, Eq)]
+enum Players {
+    Red,
+    Blue,
+}
+
+#[derive(EntityMarker, Hash, PartialEq, Eq)]
+struct CurrentPlayer;
+
+#[derive(Component)]
+struct Player(u32);
+
 fn setup(
     mut commands: Commands,
     mut markers: MarkerMut<Players>,
