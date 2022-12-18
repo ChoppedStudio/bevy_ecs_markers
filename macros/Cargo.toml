@@ -2,6 +2,10 @@
 name = "bevy_ecs_markers_macros"
 version = "0.1.0"
 edition = "2021"
+authors = ["DasLixou"]
+description = "Proc Macros for Bevy ECS Markers"
+repository = "https://github.com/ChoppedStudio/bevy_ecs_markers"
+license = "MIT OR Apache-2.0"
 
 [lib]
 proc-macro = true

@@ -2,10 +2,16 @@
 name = "bevy_ecs_markers"
 version = "0.1.0"
 edition = "2021"
+authors = ["DasLixou"]
+description = "🏷️ Markers for Bevy ECS Entities"
+repository = "https://github.com/ChoppedStudio/bevy_ecs_markers"
+keywords = ["bevy"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
 
 [dependencies]
 bevy_ecs = "0.9.1"
-bevy_ecs_markers_macros = { path = "macros" }
+bevy_ecs_markers_macros = { path = "macros", version = "0.1.0" }
 hashbrown = "0.13.1"
 
 [dev-dependencies]
