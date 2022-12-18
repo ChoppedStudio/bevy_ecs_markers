@@ -28,12 +28,14 @@ fn setup(mut commands: Commands, mut markers: MarkerMut<Players>, mut current: M
 }
 
 fn get_red_player(mut query: Query<&mut Player>, markers: Marker<Players>) {
-    let mut player = query.single_mut(markers[Players::Red]);
-    player.0 = 15;
+    if let Ok(mut player) = query.get_mut(markers[Players::Red]) {
+         player.0 = 15;
+    }
 }
 
 fn get_current_player(mut query: Query<&mut Player>, current: Marker<CurrentPlayer>) {
-    let mut player = query.single_mut(*current);
-    player.0 = 2;
+    if let Ok(mut player) = query.single_mut(*current) {
+        player.0 = 2;
+    }
 }
 ```
