@@ -1,12 +1,29 @@
-# Bevy ECS Markers
+use bevy::prelude::{App, Commands, Component, Query};
+use bevy_ecs_markers::{Marker, MarkerData, MarkerMut};
+use bevy_ecs_markers_macros::EntityMarker;
 
-Adds the support for marking entites and fetching them in queries
+#[derive(EntityMarker, Hash, PartialEq, Eq)]
+enum Players {
+    Red,
+    Blue,
+}
 
-## Example
+#[derive(EntityMarker, Hash, PartialEq, Eq)]
+struct CurrentPlayer;
 
-View the whole example [here](examples/markers.rs)
+#[derive(Component)]
+struct Player(u32);
 
-```rust
+fn main() {
+    App::new()
+        .insert_resource(MarkerData::<Players>::multiple()) // TODO: make this better
+        .insert_resource(MarkerData::<CurrentPlayer>::single())
+        .add_startup_system(setup)
+        .add_system(get_red_player)
+        .add_system(get_current_player)
+        .run();
+}
+
 fn setup(
     mut commands: Commands,
     mut markers: MarkerMut<Players>,
@@ -32,4 +49,3 @@ fn get_current_player(mut query: Query<&mut Player>, current: Marker<CurrentPlay
         player.0 = 2;
     }
 }
-```
