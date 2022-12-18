@@ -34,7 +34,7 @@ fn get_red_player(mut query: Query<&mut Player>, markers: Marker<Players>) {
 }
 
 fn get_current_player(mut query: Query<&mut Player>, current: Marker<CurrentPlayer>) {
-    if let Ok(mut player) = query.single_mut(*current) {
+    if let Ok(mut player) = query.get_mut(*current) {
         player.0 = 2;
     }
 }
