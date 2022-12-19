@@ -1,5 +1,8 @@
 # Bevy ECS Markers
 
+[![Crates.io](https://img.shields.io/crates/v/bevy_ecs_markers.svg)](https://crates.io/crates/bevy_ecs_markers)
+[![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/ChoppedStudio/bevy_ecs_markers#license)
+
 Adds the support for marking entites and fetching them in queries
 
 ## Example
@@ -7,13 +10,13 @@ Adds the support for marking entites and fetching them in queries
 View the whole example [here](examples/markers.rs)
 
 ```rust
-#[derive(EntityMarker, Hash, PartialEq, Eq)]
+#[derive(EntityMarker)]
 enum Players {
     Red,
     Blue,
 }
 
-#[derive(EntityMarker, Hash, PartialEq, Eq)]
+#[derive(EntityMarker)]
 struct CurrentPlayer;
 
 #[derive(Component)]
@@ -45,3 +48,10 @@ fn get_current_player(mut query: Query<&mut Player>, current: Marker<CurrentPlay
     }
 }
 ```
+
+## License
+
+* MIT License ([LICENSE-MIT](LICENSE-MIT) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
+* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
+
+at your option.
