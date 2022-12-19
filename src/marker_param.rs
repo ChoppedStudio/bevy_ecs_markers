@@ -7,13 +7,19 @@ use bevy_ecs::system::{Res, ResMut, SystemParam};
 use crate::{entity_marker::EntityMarker, marker_data::MarkerData};
 
 #[derive(SystemParam)]
-pub struct Marker<'s, 'w, M: EntityMarker + 'static> {
+pub struct Marker<'s, 'w, M: EntityMarker + 'static>
+where
+    [(); M::LENGTH]:,
+{
     marker_data: Res<'w, MarkerData<M>>,
     #[system_param(ignore)]
     phantom: PhantomData<&'s ()>,
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> Index<M> for Marker<'s, 'w, M> {
+impl<'s, 'w, M: EntityMarker + 'static> Index<M> for Marker<'s, 'w, M>
+where
+    [(); M::LENGTH]:,
+{
     type Output = Entity;
 
     fn index(&self, index: M) -> &Self::Output {
@@ -21,7 +27,10 @@ impl<'s, 'w, M: EntityMarker + 'static> Index<M> for Marker<'s, 'w, M> {
     }
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> Deref for Marker<'s, 'w, M> {
+impl<'s, 'w, M: EntityMarker + 'static> Deref for Marker<'s, 'w, M>
+where
+    [(); M::LENGTH]:,
+{
     type Target = Entity;
 
     fn deref(&self) -> &Self::Target {
@@ -30,13 +39,19 @@ impl<'s, 'w, M: EntityMarker + 'static> Deref for Marker<'s, 'w, M> {
 }
 
 #[derive(SystemParam)]
-pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static> {
+pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static>
+where
+    [(); M::LENGTH]:,
+{
     marker_data: ResMut<'w, MarkerData<M>>,
     #[system_param(ignore)]
     phantom: PhantomData<&'s ()>,
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> Index<M> for MarkerMut<'s, 'w, M> {
+impl<'s, 'w, M: EntityMarker + 'static> Index<M> for MarkerMut<'s, 'w, M>
+where
+    [(); M::LENGTH]:,
+{
     type Output = Entity;
 
     fn index(&self, index: M) -> &Self::Output {
@@ -44,13 +59,19 @@ impl<'s, 'w, M: EntityMarker + 'static> Index<M> for MarkerMut<'s, 'w, M> {
     }
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> IndexMut<M> for MarkerMut<'s, 'w, M> {
+impl<'s, 'w, M: EntityMarker + 'static> IndexMut<M> for MarkerMut<'s, 'w, M>
+where
+    [(); M::LENGTH]:,
+{
     fn index_mut(&mut self, index: M) -> &mut Self::Output {
         self.marker_data.value_mut(index)
     }
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> Deref for MarkerMut<'s, 'w, M> {
+impl<'s, 'w, M: EntityMarker + 'static> Deref for MarkerMut<'s, 'w, M>
+where
+    [(); M::LENGTH]:,
+{
     type Target = Entity;
 
     fn deref(&self) -> &Self::Target {
@@ -58,7 +79,10 @@ impl<'s, 'w, M: EntityMarker + 'static> Deref for MarkerMut<'s, 'w, M> {
     }
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> DerefMut for MarkerMut<'s, 'w, M> {
+impl<'s, 'w, M: EntityMarker + 'static> DerefMut for MarkerMut<'s, 'w, M>
+where
+    [(); M::LENGTH]:,
+{
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.marker_data.get_mut()
     }

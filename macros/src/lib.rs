@@ -1,6 +1,5 @@
-use bevy_macro_utils::BevyManifest;
 use proc_macro::TokenStream;
-use quote::{format_ident, quote, quote_spanned};
+use quote::{quote, quote_spanned};
 use syn::{self, spanned::Spanned};
 
 #[proc_macro_derive(EntityMarker)]
@@ -13,30 +12,69 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
     let generics = input.generics;
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let new_data = match input.data {
+    let length = match &input.data {
         syn::Data::Struct(_) => {
-            let mut entity_path = bevy_ecs_path();
-            entity_path.segments.push(format_ident!("entity").into());
-            entity_path.segments.push(format_ident!("Entity").into());
             quote! {
-                fn new_data() -> bevy_ecs_markers::MarkerData<Self>
-                    where
-                        Self: Sized
-                {
-                    // TODO: use Entity::PLACEHOLDER when released
-                    bevy_ecs_markers::MarkerData::new(bevy_ecs_markers::MarkerDataType::Single(#entity_path::from_raw(u32::MAX)))
-                }
+                const LENGTH: usize = 1;
             }
         }
 
         syn::Data::Enum(d) => {
             let capacity = d.variants.len();
             quote! {
-                fn new_data() -> bevy_ecs_markers::MarkerData<Self>
-                    where
-                        Self: Sized
-                {
-                    bevy_ecs_markers::MarkerData::new(bevy_ecs_markers::MarkerDataType::Multiple(hashbrown::HashMap::with_capacity(#capacity)))
+                const LENGTH: usize = #capacity;
+            }
+        }
+
+        syn::Data::Union(_) => {
+            quote_spanned! {
+                span => compile_error!("Unions cannot be used as Markers.");
+            }
+        }
+    };
+
+    let new_data = quote! {
+        fn new_data() -> bevy_ecs_markers::MarkerData<Self>
+            where
+                [(); Self::LENGTH]:,
+                Self: Sized
+        {
+            bevy_ecs_markers::MarkerData::new()
+        }
+    };
+
+    let unit_index = match input.data {
+        syn::Data::Struct(_) => {
+            quote! {
+                fn unit_index(&self) -> usize {
+                    0
+                }
+            }
+        }
+
+        syn::Data::Enum(d) => {
+            let mut arms = quote!();
+            let mut index = 0;
+            for variant in d.variants {
+                match variant.fields {
+                    syn::Fields::Unit => {
+                        let ident = variant.ident;
+                        arms = quote! { #arms Self::#ident => #index, };
+                        index += 1;
+                    }
+                    _ => {
+                        return quote_spanned! {
+                            span => compile_error!("All Fields should be Units!");
+                        }
+                        .into();
+                    }
+                };
+            }
+            quote! {
+                fn unit_index(&self) -> usize {
+                    match self {
+                        #arms
+                    }
                 }
             }
         }
@@ -50,12 +88,12 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
 
     quote! {
         impl #impl_generics bevy_ecs_markers::EntityMarker for #name #ty_generics #where_clause {
+            #length
+
             #new_data
+
+            #unit_index
         }
     }
     .into()
-}
-
-pub(crate) fn bevy_ecs_path() -> syn::Path {
-    BevyManifest::default().get_path("bevy_ecs")
 }

@@ -1,3 +1,5 @@
+#![feature(generic_const_exprs)]
+
 mod entity_marker;
 mod marker_data;
 mod marker_param;

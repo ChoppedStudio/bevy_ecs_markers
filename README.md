@@ -7,13 +7,13 @@ Adds the support for marking entites and fetching them in queries
 View the whole example [here](examples/markers.rs)
 
 ```rust
-#[derive(EntityMarker, Hash, PartialEq, Eq)]
+#[derive(EntityMarker)]
 enum Players {
     Red,
     Blue,
 }
 
-#[derive(EntityMarker, Hash, PartialEq, Eq)]
+#[derive(EntityMarker)]
 struct CurrentPlayer;
 
 #[derive(Component)]

@@ -2,13 +2,13 @@ use bevy::prelude::{App, Commands, Component, Query};
 use bevy_ecs_markers::{Marker, MarkerData, MarkerMut};
 use bevy_ecs_markers_macros::EntityMarker;
 
-#[derive(EntityMarker, Hash, PartialEq, Eq)]
+#[derive(EntityMarker)]
 enum Players {
     Red,
     Blue,
 }
 
-#[derive(EntityMarker, Hash, PartialEq, Eq)]
+#[derive(EntityMarker)]
 struct CurrentPlayer;
 
 #[derive(Component)]
