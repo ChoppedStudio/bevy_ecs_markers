@@ -1,5 +1,6 @@
+use bevy_macro_utils::BevyManifest;
 use proc_macro::TokenStream;
-use quote::{quote, quote_spanned};
+use quote::{format_ident, quote, quote_spanned};
 use syn::{self, spanned::Spanned};
 
 #[proc_macro_derive(EntityMarker)]
@@ -12,17 +13,39 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
     let generics = input.generics;
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let length = match &input.data {
+    let storage = match &input.data {
         syn::Data::Struct(_) => {
+            let mut entity_path = bevy_ecs_path();
+            entity_path.segments.push(format_ident!("entity").into());
+            entity_path.segments.push(format_ident!("Entity").into());
             quote! {
-                const LENGTH: usize = 1;
+                type Storage = [#entity_path; 1];
+
+                #[inline(always)]
+                fn create_storage() -> Self::Storage
+                    where
+                        Self: Sized
+                {
+                    [Self::PLACEHOLDER; 1]
+                }
             }
         }
 
         syn::Data::Enum(d) => {
+            let mut entity_path = bevy_ecs_path();
+            entity_path.segments.push(format_ident!("entity").into());
+            entity_path.segments.push(format_ident!("Entity").into());
             let capacity = d.variants.len();
             quote! {
-                const LENGTH: usize = #capacity;
+                type Storage = [#entity_path; #capacity];
+
+                #[inline(always)]
+                fn create_storage() -> Self::Storage
+                    where
+                        Self: Sized
+                {
+                    [Self::PLACEHOLDER; #capacity]
+                }
             }
         }
 
@@ -36,7 +59,6 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
     let new_data = quote! {
         fn new_data() -> bevy_ecs_markers::MarkerData<Self>
             where
-                [(); Self::LENGTH]:,
                 Self: Sized
         {
             bevy_ecs_markers::MarkerData::new()
@@ -90,7 +112,7 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
 
     quote! {
         impl #impl_generics bevy_ecs_markers::EntityMarker for #name #ty_generics #where_clause {
-            #length
+            #storage
 
             #new_data
 
@@ -98,4 +120,8 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
         }
     }
     .into()
+}
+
+pub(crate) fn bevy_ecs_path() -> syn::Path {
+    BevyManifest::default().get_path("bevy_ecs")
 }

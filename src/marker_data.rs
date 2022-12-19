@@ -2,34 +2,23 @@ use bevy_ecs::{entity::Entity, system::Resource};
 
 use crate::entity_marker::EntityMarker;
 
-const PLACEHOLDER: Entity = Entity::from_raw(u32::MAX); // TODO: use Entity::PLACEHOLDER when released
-
 #[derive(Resource)]
-pub struct MarkerData<M: EntityMarker>
-where
-    [(); M::LENGTH]:,
-{
-    data: [Entity; M::LENGTH],
+pub struct MarkerData<M: EntityMarker> {
+    data: M::Storage,
 }
 
-impl<M: EntityMarker> Default for MarkerData<M>
-where
-    [(); M::LENGTH]:,
-{
+impl<M: EntityMarker> Default for MarkerData<M> {
     #[inline]
     fn default() -> Self {
         M::new_data()
     }
 }
 
-impl<M: EntityMarker> MarkerData<M>
-where
-    [(); M::LENGTH]:,
-{
+impl<M: EntityMarker> MarkerData<M> {
     #[inline]
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self {
-            data: [PLACEHOLDER; M::LENGTH],
+            data: M::create_storage(),
         }
     }
 
