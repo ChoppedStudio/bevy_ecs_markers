@@ -54,7 +54,7 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
 
         syn::Data::Enum(d) => {
             let mut arms = quote!();
-            let mut index = 0;
+            let mut index: usize = 0;
             for variant in d.variants {
                 match variant.fields {
                     syn::Fields::Unit => {
