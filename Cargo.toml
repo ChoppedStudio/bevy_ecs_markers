@@ -1,6 +1,6 @@
 [package]
 name = "bevy_ecs_markers"
-version = "0.1.3-dev"
+version = "0.1.3"
 edition = "2021"
 authors = ["DasLixou"]
 description = "🏷️ Markers for Bevy ECS Entities"
@@ -11,7 +11,7 @@ readme = "README.md"
 
 [dependencies]
 bevy_ecs = "0.9.1"
-bevy_ecs_markers_macros = { path = "macros", version = "0.1.3-dev" }
+bevy_ecs_markers_macros = { path = "macros", version = "0.1.3" }
 
 [dev-dependencies]
 bevy = "0.9.1"

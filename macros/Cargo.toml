@@ -1,6 +1,6 @@
 [package]
 name = "bevy_ecs_markers_macros"
-version = "0.1.3-dev"
+version = "0.1.3"
 edition = "2021"
 authors = ["DasLixou"]
 description = "Proc Macros for Bevy ECS Markers"
