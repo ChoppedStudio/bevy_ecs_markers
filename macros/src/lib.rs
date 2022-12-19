@@ -46,6 +46,7 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
     let unit_index = match input.data {
         syn::Data::Struct(_) => {
             quote! {
+                #[inline(always)]
                 fn unit_index(&self) -> usize {
                     0
                 }
@@ -71,6 +72,7 @@ pub fn item_data_derive(input: TokenStream) -> TokenStream {
                 };
             }
             quote! {
+                #[inline(always)]
                 fn unit_index(&self) -> usize {
                     match self {
                         #arms
