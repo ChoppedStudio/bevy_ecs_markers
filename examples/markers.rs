@@ -1,3 +1,5 @@
+#![feature(generic_const_exprs)]
+
 use bevy::prelude::{App, Commands, Component, Query};
 use bevy_ecs_markers::{
     params::{Marker, MarkerMut},
