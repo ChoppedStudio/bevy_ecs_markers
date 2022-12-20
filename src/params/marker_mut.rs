@@ -16,12 +16,14 @@ pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static> {
 impl<'s, 'w, M: EntityMarker + 'static> Index<M> for MarkerMut<'s, 'w, M> {
     type Output = Entity;
 
+    #[inline(always)]
     fn index(&self, index: M) -> &Self::Output {
         self.marker_data.value(index)
     }
 }
 
 impl<'s, 'w, M: EntityMarker + 'static> IndexMut<M> for MarkerMut<'s, 'w, M> {
+    #[inline(always)]
     fn index_mut(&mut self, index: M) -> &mut Self::Output {
         self.marker_data.value_mut(index)
     }
@@ -30,12 +32,14 @@ impl<'s, 'w, M: EntityMarker + 'static> IndexMut<M> for MarkerMut<'s, 'w, M> {
 impl<'s, 'w, M: EntityMarker + 'static> Deref for MarkerMut<'s, 'w, M> {
     type Target = Entity;
 
+    #[inline(always)]
     fn deref(&self) -> &Self::Target {
         self.marker_data.get()
     }
 }
 
 impl<'s, 'w, M: EntityMarker + 'static> DerefMut for MarkerMut<'s, 'w, M> {
+    #[inline(always)]
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.marker_data.get_mut()
     }

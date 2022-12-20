@@ -16,6 +16,7 @@ pub struct Marker<'s, 'w, M: EntityMarker + 'static> {
 impl<'s, 'w, M: EntityMarker + 'static> Index<M> for Marker<'s, 'w, M> {
     type Output = Entity;
 
+    #[inline(always)]
     fn index(&self, index: M) -> &Self::Output {
         self.marker_data.value(index)
     }
@@ -24,6 +25,7 @@ impl<'s, 'w, M: EntityMarker + 'static> Index<M> for Marker<'s, 'w, M> {
 impl<'s, 'w, M: EntityMarker + 'static> Deref for Marker<'s, 'w, M> {
     type Target = Entity;
 
+    #[inline(always)]
     fn deref(&self) -> &Self::Target {
         self.marker_data.get()
     }
