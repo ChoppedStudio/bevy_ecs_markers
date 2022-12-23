@@ -1,7 +1,7 @@
 use bevy::prelude::{App, Commands, Component, Query};
 use bevy_ecs_markers::{
     params::{Marker, MarkerMut},
-    EntityMarker, MarkerData,
+    EntityMarker,
 };
 
 #[derive(EntityMarker)]
