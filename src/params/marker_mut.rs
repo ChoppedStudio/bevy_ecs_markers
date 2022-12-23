@@ -4,6 +4,7 @@ use std::{marker::PhantomData, ops::Index};
 use bevy_ecs::prelude::Entity;
 use bevy_ecs::system::{ResMut, SystemParam};
 
+use crate::DynamicEntityMarker;
 use crate::{entity_marker::EntityMarker, marker_data::MarkerData};
 
 /// A System Param that can read and modify the data from a given [`EntityMarker`]
@@ -12,6 +13,13 @@ pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static> {
     marker_data: ResMut<'w, MarkerData<M>>,
     #[system_param(ignore)]
     phantom: PhantomData<&'s ()>,
+}
+
+impl<'s, 'w, M: EntityMarker + DynamicEntityMarker + 'static> MarkerMut<'s, 'w, M> {
+    #[inline(always)]
+    pub fn add(&mut self, entity: Entity) {
+        self.marker_data.add(entity);
+    }
 }
 
 impl<'s, 'w, M: EntityMarker + 'static> Index<M> for MarkerMut<'s, 'w, M> {

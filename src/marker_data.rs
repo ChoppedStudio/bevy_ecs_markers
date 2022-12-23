@@ -1,6 +1,6 @@
 use bevy_ecs::{entity::Entity, system::Resource};
 
-use crate::entity_marker::EntityMarker;
+use crate::{entity_marker::EntityMarker, DynamicEntityMarker};
 
 /// This is the container which stores all IDs from [`Entity`] in it
 #[derive(Resource)]
@@ -41,5 +41,12 @@ impl<M: EntityMarker> MarkerData<M> {
     #[inline(always)]
     pub fn get_mut(&mut self) -> &mut Entity {
         &mut self.data[0]
+    }
+}
+
+impl<M: EntityMarker + DynamicEntityMarker> MarkerData<M> {
+    #[inline(always)]
+    pub fn add(&mut self, entity: Entity) {
+        M::add(&mut self.data, entity);
     }
 }

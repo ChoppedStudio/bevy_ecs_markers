@@ -19,3 +19,9 @@ pub trait EntityMarker: Sync + Send {
 
     fn unit_index(&self) -> usize;
 }
+
+pub trait DynamicEntityMarker: EntityMarker {
+    fn add(storage: &mut Self::Storage, entity: Entity)
+    where
+        Self: Sized;
+}
