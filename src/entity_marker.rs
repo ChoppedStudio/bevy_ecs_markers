@@ -5,9 +5,5 @@ pub trait EntityMarker: Sync + Send {
 
     type MarkerData: Resource + Default;
 
-    fn new_data() -> Self::MarkerData
-    where
-        Self: Sized;
-
     fn unit_index(&self) -> usize;
 }

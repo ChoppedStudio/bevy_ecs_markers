@@ -7,6 +7,7 @@ pub trait InitMarkerData {
 }
 
 impl InitMarkerData for World {
+    #[inline(always)]
     fn init_markerdata<M: EntityMarker>(&mut self) -> &mut Self {
         self.init_resource::<M::MarkerData>();
         self
@@ -15,6 +16,7 @@ impl InitMarkerData for World {
 
 #[cfg(feature = "full_bevy")]
 impl InitMarkerData for bevy::prelude::App {
+    #[inline(always)]
     fn init_markerdata<M: EntityMarker>(&mut self) -> &mut Self {
         self.init_resource::<M::MarkerData>();
         self

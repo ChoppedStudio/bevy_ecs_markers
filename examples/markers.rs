@@ -18,8 +18,8 @@ struct Player(u32);
 
 fn main() {
     App::new()
-        .init_resource::<MarkerData<Players>>()
-        .init_resource::<MarkerData<CurrentPlayer>>()
+        .init_resource::<<Players as EntityMarker>::MarkerData>()
+        .init_resource::<<CurrentPlayer as EntityMarker>::MarkerData>()
         .add_startup_system(setup)
         .add_system(get_red_player)
         .add_system(get_current_player)
