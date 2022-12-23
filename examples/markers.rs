@@ -1,9 +1,8 @@
 use bevy::prelude::{App, Commands, Component, Query};
 use bevy_ecs_markers::{
     params::{Marker, MarkerMut},
-    MarkerData,
+    EntityMarker, MarkerData,
 };
-use bevy_ecs_markers_macros::EntityMarker;
 
 #[derive(EntityMarker)]
 enum Players {
