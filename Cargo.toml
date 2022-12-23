@@ -10,12 +10,14 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 
 [dependencies]
+bevy = { version = "0.9.1", optional = true }
 bevy_ecs = "0.9.1"
 bevy_ecs_markers_macros = { path = "macros", version = "0.1.4", optional = true }
 
 [features]
 default = ["proc"]
 proc = ["dep:bevy_ecs_markers_macros"]
+full_bevy = ["dep:bevy"]
 
 [dev-dependencies]
 bevy = "0.9.1"
