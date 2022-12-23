@@ -2,6 +2,7 @@ use bevy_ecs::{entity::Entity, system::Resource};
 
 use crate::entity_marker::EntityMarker;
 
+/// This is the container which stores all IDs from [`Entity`] in it
 #[derive(Resource)]
 pub struct MarkerData<M: EntityMarker> {
     data: M::Storage,

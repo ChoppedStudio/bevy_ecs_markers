@@ -6,6 +6,7 @@ use bevy_ecs::system::{Res, SystemParam};
 
 use crate::{entity_marker::EntityMarker, marker_data::MarkerData};
 
+/// A System Param that can read the data from a given [`EntityMarker`]
 #[derive(SystemParam)]
 pub struct Marker<'s, 'w, M: EntityMarker + 'static> {
     marker_data: Res<'w, MarkerData<M>>,

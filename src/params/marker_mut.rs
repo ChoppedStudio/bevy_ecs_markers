@@ -6,6 +6,7 @@ use bevy_ecs::system::{ResMut, SystemParam};
 
 use crate::{entity_marker::EntityMarker, marker_data::MarkerData};
 
+/// A System Param that can read and modify the data from a given [`EntityMarker`]
 #[derive(SystemParam)]
 pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static> {
     marker_data: ResMut<'w, MarkerData<M>>,
