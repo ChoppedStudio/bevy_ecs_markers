@@ -1,11 +1,9 @@
-use std::ops::{Deref, DerefMut, IndexMut};
-use std::{marker::PhantomData, ops::Index};
+use std::marker::PhantomData;
+use std::ops::{Deref, DerefMut};
 
-use bevy_ecs::prelude::Entity;
 use bevy_ecs::system::{ResMut, SystemParam};
 
 use crate::entity_marker::EntityMarker;
-use crate::{DynMarkerData, SingleMarkerData, ValueMarkerData};
 
 /// A System Param that can read and modify the data from a given [`EntityMarker`]
 #[derive(SystemParam)]
@@ -15,56 +13,18 @@ pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static> {
     phantom: PhantomData<&'s ()>,
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> MarkerMut<'s, 'w, M>
-where
-    M::MarkerData: DynMarkerData<M>,
-{
-    #[inline(always)]
-    pub fn add(&mut self, entity: Entity) {
-        self.marker_data.add(entity);
-    }
-}
-
-impl<'s, 'w, M: EntityMarker + 'static> Index<M> for MarkerMut<'s, 'w, M>
-where
-    M::MarkerData: ValueMarkerData<M>,
-{
-    type Output = Entity;
-
-    #[inline(always)]
-    fn index(&self, index: M) -> &Self::Output {
-        self.marker_data.value(index)
-    }
-}
-
-impl<'s, 'w, M: EntityMarker + 'static> IndexMut<M> for MarkerMut<'s, 'w, M>
-where
-    M::MarkerData: ValueMarkerData<M>,
-{
-    #[inline(always)]
-    fn index_mut(&mut self, index: M) -> &mut Self::Output {
-        self.marker_data.value_mut(index)
-    }
-}
-
-impl<'s, 'w, M: EntityMarker + 'static> Deref for MarkerMut<'s, 'w, M>
-where
-    M::MarkerData: SingleMarkerData<M>,
-{
-    type Target = Entity;
+impl<'s, 'w, M: EntityMarker + 'static> Deref for MarkerMut<'s, 'w, M> {
+    type Target = M::MarkerData;
 
     #[inline(always)]
     fn deref(&self) -> &Self::Target {
-        self.marker_data.get()
+        &*self.marker_data
     }
 }
 
-impl<'s, 'w, M: EntityMarker + 'static> DerefMut for MarkerMut<'s, 'w, M>
-where
-    M::MarkerData: SingleMarkerData<M>,
-{
+impl<'s, 'w, M: EntityMarker + 'static> DerefMut for MarkerMut<'s, 'w, M> {
     #[inline(always)]
     fn deref_mut(&mut self) -> &mut Self::Target {
-        self.marker_data.get_mut()
+        &mut *self.marker_data
     }
 }

@@ -53,6 +53,24 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
                     }
                 }
 
+                impl std::ops::Deref for #marker_name {
+                    type Target = #entity_path;
+
+                    #[inline(always)]
+                    fn deref(&self) -> &Self::Target {
+                        use bevy_ecs_markers::SingleMarkerData;
+                        self.get()
+                    }
+                }
+
+                impl std::ops::DerefMut for #marker_name {
+                    #[inline(always)]
+                    fn deref_mut(&mut self) -> &mut Self::Target {
+                        use bevy_ecs_markers::SingleMarkerData;
+                        self.get_mut()
+                    }
+                }
+
                 impl Default for #marker_name {
                     #[inline(always)]
                     fn default() -> Self {
@@ -111,6 +129,24 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
                         match key {
                             #arms
                         }
+                    }
+                }
+
+                impl std::ops::Index<#name> for #marker_name {
+                    type Output = #entity_path;
+
+                    #[inline(always)]
+                    fn index(&self, index: #name) -> &Self::Output {
+                        use bevy_ecs_markers::ValueMarkerData;
+                        self.value(index)
+                    }
+                }
+
+                impl std::ops::IndexMut<#name> for #marker_name {
+                    #[inline(always)]
+                    fn index_mut(&mut self, index: #name) -> &mut Self::Output {
+                        use bevy_ecs_markers::ValueMarkerData;
+                        self.value_mut(index)
                     }
                 }
 
