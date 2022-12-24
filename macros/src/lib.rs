@@ -19,6 +19,8 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
         type MarkerData = #marker_name;
     };
 
+    // BEGIN Some useful declarations
+
     let mut entity_path = bevy_ecs_path();
     entity_path.segments.push(format_ident!("entity").into());
     entity_path.segments.push(format_ident!("Entity").into());
@@ -28,6 +30,10 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
     resource_path
         .segments
         .push(format_ident!("Resource").into());
+
+    let placeholder = quote! { #entity_path::from_raw(u32::MAX) }; // TODO: use Entity::PLACEHOLDER when released
+
+    // END
 
     let marker_data = match &input.data {
         syn::Data::Struct(_) => {
@@ -50,7 +56,7 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
                 impl Default for #marker_name {
                     #[inline(always)]
                     fn default() -> Self {
-                        Self(#entity_path::from_raw(u32::MAX)) // TODO: use Entity::PLACEHOLDER when released
+                        Self(#placeholder)
                     }
                 }
             }
@@ -77,7 +83,7 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
                 impl Default for #marker_name {
                     #[inline(always)]
                     fn default() -> Self {
-                        Self([#entity_path::from_raw(u32::MAX); #capacity]) // TODO: use Entity::PLACEHOLDER when released
+                        Self([#placeholder; #capacity])
                     }
                 }
             }
