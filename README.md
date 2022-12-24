@@ -7,7 +7,7 @@ Adds the support for marking entites and fetching them in queries
 
 ## Example
 
-View the whole example [here](examples/markers.rs)
+View more examples [here](examples/)
 
 ```rust
 #[derive(EntityMarker)]
