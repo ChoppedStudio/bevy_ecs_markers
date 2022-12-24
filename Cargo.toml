@@ -8,6 +8,7 @@ repository = "https://github.com/ChoppedStudio/bevy_ecs_markers"
 keywords = ["bevy"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
+exclude = ["examples"]
 
 [dependencies]
 bevy_ecs = "0.9.1"
