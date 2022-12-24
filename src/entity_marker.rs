@@ -1,21 +1,9 @@
-use std::ops::{Index, IndexMut};
+use bevy_ecs::system::Resource;
 
-use bevy_ecs::entity::Entity;
-
-use crate::MarkerData;
-
+/// Defines which MarkerData to use for this EntityMarker
+///
+/// ## Hint
+/// `#[derive(EntityMarker)]` automaticly creates and links a matching MarkerData type for the type to which the derive is applied to.
 pub trait EntityMarker: Sync + Send {
-    const PLACEHOLDER: Entity = Entity::from_raw(u32::MAX); // TODO: use Entity::PLACEHOLDER when released
-
-    type Storage: Index<usize, Output = Entity> + IndexMut<usize> + Send + Sync;
-
-    fn create_storage() -> Self::Storage
-    where
-        Self: Sized;
-
-    fn new_data() -> MarkerData<Self>
-    where
-        Self: Sized;
-
-    fn unit_index(&self) -> usize;
+    type MarkerData: Resource + Default;
 }

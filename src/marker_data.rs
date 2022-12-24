@@ -1,45 +1,19 @@
-use bevy_ecs::{entity::Entity, system::Resource};
+use bevy_ecs::entity::Entity;
 
 use crate::entity_marker::EntityMarker;
 
-/// This is the container which stores all IDs from [`Entity`] in it
-#[derive(Resource)]
-pub struct MarkerData<M: EntityMarker> {
-    data: M::Storage,
+/// This trait is used for MarkerData when it only holds one [`Entity`] or has a selection from [`SelectableMarkerData`]
+pub trait SingleMarkerData<M: EntityMarker> {
+    fn get(&self) -> &Entity;
+    fn get_mut(&mut self) -> &mut Entity;
 }
 
-impl<M: EntityMarker> Default for MarkerData<M> {
-    #[inline(always)]
-    fn default() -> Self {
-        M::new_data()
-    }
-}
+/// This trait is used for MarkerData when it holds multiple of [`Entity`] and can be retrieved by a key
+pub trait ValueMarkerData<M: EntityMarker> {
+    fn value(&self, key: M) -> &Entity;
+    fn value_mut(&mut self, key: M) -> &mut Entity;
 
-impl<M: EntityMarker> MarkerData<M> {
-    #[inline(always)]
-    pub fn new() -> Self {
-        Self {
-            data: M::create_storage(),
-        }
-    }
-
-    #[inline(always)]
-    pub fn value(&self, key: M) -> &Entity {
-        &self.data[key.unit_index()]
-    }
-
-    #[inline(always)]
-    pub fn value_mut(&mut self, key: M) -> &mut Entity {
-        &mut self.data[key.unit_index()]
-    }
-
-    #[inline(always)]
-    pub fn get(&self) -> &Entity {
-        &self.data[0]
-    }
-
-    #[inline(always)]
-    pub fn get_mut(&mut self) -> &mut Entity {
-        &mut self.data[0]
-    }
+    fn unit_index(key: M) -> usize
+    where
+        Self: Sized;
 }

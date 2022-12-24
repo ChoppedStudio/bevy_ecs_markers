@@ -7,7 +7,7 @@ Adds the support for marking entites and fetching them in queries
 
 ## Example
 
-View the whole example [here](examples/markers.rs)
+View more examples [here](examples/)
 
 ```rust
 #[derive(EntityMarker)]
@@ -33,7 +33,7 @@ fn setup(
     let blue = commands.spawn(Player(7)).id();
     markers[Players::Blue] = blue;
 
-    *current = blue;
+    **current = blue;
 }
 
 fn get_red_player(mut query: Query<&mut Player>, markers: Marker<Players>) {
@@ -43,7 +43,7 @@ fn get_red_player(mut query: Query<&mut Player>, markers: Marker<Players>) {
 }
 
 fn get_current_player(mut query: Query<&mut Player>, current: Marker<CurrentPlayer>) {
-    if let Ok(mut player) = query.get_mut(*current) {
+    if let Ok(mut player) = query.get_mut(**current) {
         player.0 = 2;
     }
 }
