@@ -35,7 +35,7 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
 
     // END
 
-    let marker_data = match &input.data {
+    let marker_data = match input.data {
         syn::Data::Struct(_) => {
             quote! {
                 #[derive(#resource_path)]
@@ -64,6 +64,30 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
 
         syn::Data::Enum(d) => {
             let capacity = d.variants.len();
+
+            // BEGIN unit_index
+
+            let mut arms = quote!();
+            let mut index: usize = 0;
+
+            for variant in d.variants {
+                match variant.fields {
+                    syn::Fields::Unit => {
+                        let ident = variant.ident;
+                        arms = quote! { #arms #name::#ident => #index, };
+                        index += 1;
+                    }
+                    _ => {
+                        return quote_spanned! {
+                            span => compile_error!("All Fields should be Units!");
+                        }
+                        .into();
+                    }
+                };
+            }
+
+            // END
+
             quote! {
                 #[derive(#resource_path)]
                 struct #marker_name ([#entity_path; #capacity]);
@@ -71,12 +95,22 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
                 impl bevy_ecs_markers::ValueMarkerData<#name> for #marker_name {
                     #[inline(always)]
                     fn value(&self, key: #name) -> &#entity_path {
-                        &self.0[key.unit_index()]
+                        &self.0[#marker_name::unit_index(key)]
                     }
 
                     #[inline(always)]
                     fn value_mut(&mut self, key: #name) -> &mut #entity_path {
-                        &mut self.0[key.unit_index()]
+                        &mut self.0[#marker_name::unit_index(key)]
+                    }
+
+                    #[inline]
+                    fn unit_index(key: #name) -> usize
+                        where
+                            Self: Sized
+                    {
+                        match key {
+                            #arms
+                        }
                     }
                 }
 
@@ -96,58 +130,11 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
         }
     };
 
-    let unit_index = match input.data {
-        syn::Data::Struct(_) => {
-            quote! {
-                #[inline(always)]
-                fn unit_index(&self) -> usize {
-                    0
-                }
-            }
-        }
-
-        syn::Data::Enum(d) => {
-            let mut arms = quote!();
-            let mut index: usize = 0;
-            for variant in d.variants {
-                match variant.fields {
-                    syn::Fields::Unit => {
-                        let ident = variant.ident;
-                        arms = quote! { #arms Self::#ident => #index, };
-                        index += 1;
-                    }
-                    _ => {
-                        return quote_spanned! {
-                            span => compile_error!("All Fields should be Units!");
-                        }
-                        .into();
-                    }
-                };
-            }
-            quote! {
-                #[inline(always)]
-                fn unit_index(&self) -> usize {
-                    match self {
-                        #arms
-                    }
-                }
-            }
-        }
-
-        syn::Data::Union(_) => {
-            quote_spanned! {
-                span => compile_error!("Unions cannot be used as Markers.");
-            }
-        }
-    };
-
     quote! {
         #marker_data
 
         impl #impl_generics bevy_ecs_markers::EntityMarker for #name #ty_generics #where_clause {
             #marker_data_link
-
-            #unit_index
         }
     }
     .into()
