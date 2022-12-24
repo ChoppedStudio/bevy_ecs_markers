@@ -1,0 +1,9 @@
+[package]
+name = "single_marker"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+bevy = "0.9.1"
+bevy_ecs_markers = { path = "../../", features = ["full_bevy"] }
