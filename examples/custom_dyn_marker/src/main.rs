@@ -30,6 +30,9 @@ fn setup(mut commands: Commands, mut players: MarkerMut<Players>) {
 
     let blue = commands.spawn(Player(7)).id();
     players.add(blue);
+
+    players.select(0);
+    players.select_next();
 }
 
 fn get_selected_player(mut query: Query<&mut Player>, players: Marker<Players>) {

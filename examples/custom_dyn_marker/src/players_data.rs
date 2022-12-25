@@ -12,6 +12,14 @@ impl PlayersMarkerData {
     pub fn add(&mut self, entity: Entity) {
         self.0.push(entity)
     }
+
+    pub fn select(&mut self, index: usize) {
+        self.1 = index;
+    }
+
+    pub fn select_next(&mut self) {
+        self.1 = (self.1 + 1) % self.0.len();
+    }
 }
 
 impl SingleMarkerData<Players> for PlayersMarkerData {
