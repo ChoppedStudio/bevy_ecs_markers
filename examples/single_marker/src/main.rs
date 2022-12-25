@@ -23,10 +23,11 @@ fn setup(mut commands: Commands, mut current: MarkerMut<CurrentPlayer>) {
 
     let blue = commands.spawn(Player(7)).id();
 
-    **current = blue;
+    **current = blue; // TODO: can we make this just one deref?
 }
 
 fn get_current_player(mut query: Query<&mut Player>, current: Marker<CurrentPlayer>) {
+    // TODO: can we make this just one deref?
     if let Ok(mut player) = query.get_mut(**current) {
         player.0 = 2;
     }
