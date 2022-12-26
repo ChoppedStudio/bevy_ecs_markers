@@ -13,6 +13,7 @@ pub fn parse_entity_marker_derive(input: TokenStream) -> TokenStream {
 
     let span = input.span();
 
+    let visibility = &input.vis;
     let name = &input.ident;
     let generics = &input.generics;
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -36,9 +37,9 @@ pub fn parse_entity_marker_derive(input: TokenStream) -> TokenStream {
 
     // Marker Data Implementation
     let marker_data = match input.data {
-        syn::Data::Struct(_) => default_single_marker_impl(name, marker_name),
+        syn::Data::Struct(_) => default_single_marker_impl(visibility, name, marker_name),
 
-        syn::Data::Enum(d) => default_value_marker_impl(span, d, name, marker_name),
+        syn::Data::Enum(d) => default_value_marker_impl(visibility, span, d, name, marker_name),
 
         syn::Data::Union(_) => quote_spanned! {
             span => compile_error!("Unions cannot be used as Markers.");
@@ -93,6 +94,7 @@ fn parse_marker_attr(ast: &DeriveInput, mut attrs: Attrs) -> Result<Attrs> {
 }
 
 fn default_single_marker_impl(
+    visibility: impl ToTokens,
     name: impl ToTokens,
     marker_name: impl ToTokens,
 ) -> quote::__private::TokenStream {
@@ -102,7 +104,7 @@ fn default_single_marker_impl(
 
     quote! {
         #[derive(#resource_path)]
-        struct #marker_name (#entity_path);
+        #visibility struct #marker_name (#entity_path);
 
         impl bevy_ecs_markers::SingleMarkerData<#name> for #marker_name {
             #[inline(always)]
@@ -145,6 +147,7 @@ fn default_single_marker_impl(
 }
 
 fn default_value_marker_impl(
+    visibility: impl ToTokens,
     span: Span,
     d: DataEnum,
     name: impl ToTokens,
@@ -178,7 +181,7 @@ fn default_value_marker_impl(
 
     quote! {
         #[derive(#resource_path)]
-        struct #marker_name ([#entity_path; #capacity]);
+        #visibility struct #marker_name ([#entity_path; #capacity]);
 
         impl bevy_ecs_markers::ValueMarkerData<#name> for #marker_name {
             #[inline(always)]

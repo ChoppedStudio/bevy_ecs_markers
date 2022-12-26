@@ -1,3 +1,7 @@
+# 1.0.3
+
+* Make generated MarkerData having same visibility as `EntityMarker` struct.
+
 # 1.0.2
 
 * Rename `#[marker]` to `#[entity_marker]` due to nameing problems

@@ -6,7 +6,7 @@ use bevy_ecs_markers::{
 
 #[derive(EntityMarker)]
 #[entity_marker(data_name = "CurrentPlayerMarker")]
-struct CurrentPlayer;
+pub struct CurrentPlayer;
 
 #[derive(Component)]
 struct Player(u32);
