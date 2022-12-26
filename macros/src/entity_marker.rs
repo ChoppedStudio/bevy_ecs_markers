@@ -5,7 +5,7 @@ use syn::{self, spanned::Spanned, DataEnum, DeriveInput, Error, Result};
 
 use crate::paths;
 
-const MARKER: Symbol = Symbol("marker");
+const ENTITY_MARKER: Symbol = Symbol("entity_marker");
 const DATA_NAME: Symbol = Symbol("data_name");
 
 pub fn parse_entity_marker_derive(input: TokenStream) -> TokenStream {
@@ -60,7 +60,7 @@ struct Attrs {
 }
 
 fn parse_marker_attr(ast: &DeriveInput, mut attrs: Attrs) -> Result<Attrs> {
-    let meta_items = bevy_macro_utils::parse_attrs(ast, MARKER)?;
+    let meta_items = bevy_macro_utils::parse_attrs(ast, ENTITY_MARKER)?;
 
     for meta in meta_items {
         use syn::{

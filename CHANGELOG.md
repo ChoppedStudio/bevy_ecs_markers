@@ -1,3 +1,7 @@
+# 1.0.2
+
+* Rename `#[marker]` to `#[entity_marker]` due to nameing problems
+
 # 1.0.1
 
 * Add `#[marker]` attribute to `#[derive(EntityMarker)]`
