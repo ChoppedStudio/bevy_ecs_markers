@@ -8,7 +8,7 @@ use crate::entity_marker::EntityMarker;
 /// A System Param that can read and modify the data from a given [`EntityMarker`]
 #[derive(SystemParam)]
 pub struct MarkerMut<'s, 'w, M: EntityMarker + 'static> {
-    marker_data: ResMut<'w, M::MarkerData>,
+    marker_data: ResMut<'w, <M as EntityMarker>::MarkerData>,
     #[system_param(ignore)]
     phantom: PhantomData<&'s ()>,
 }

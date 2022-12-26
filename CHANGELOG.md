@@ -1,3 +1,7 @@
+# 1.0.4
+
+* Fix weird compile error
+
 # 1.0.3
 
 * Make generated MarkerData having same visibility as `EntityMarker` struct.
