@@ -1,20 +1,32 @@
-use bevy_macro_utils::BevyManifest;
+use bevy_macro_utils::{get_lit_str, BevyManifest, Symbol};
 use proc_macro::TokenStream;
-use quote::{format_ident, quote, quote_spanned};
-use syn::{self, spanned::Spanned};
+use quote::{format_ident, quote, quote_spanned, ToTokens};
+use syn::{self, spanned::Spanned, DeriveInput, Error, Result};
 
-#[proc_macro_derive(EntityMarker)]
+const MARKER: Symbol = Symbol("marker");
+const DATA_NAME: Symbol = Symbol("data_name");
+
+#[proc_macro_derive(EntityMarker, attributes(marker))]
 pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
 
     let span = input.span();
 
     let name = &input.ident;
-    let generics = input.generics;
+    let generics = &input.generics;
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let temp = format!("{}MarkerData", name.to_string());
-    let marker_name = syn::Ident::new(&temp, name.span());
+    let attrs = match parse_marker_attr(
+        &input,
+        MarkerAttrs {
+            data_name: format!("{}MarkerData", name.to_string()),
+        },
+    ) {
+        Ok(attrs) => attrs,
+        Err(e) => return e.into_compile_error().into(),
+    };
+
+    let marker_name = syn::Ident::new(&attrs.data_name, name.span());
     let marker_data_link = quote! {
         type MarkerData = #marker_name;
     };
@@ -174,6 +186,43 @@ pub fn entity_marker_derive(input: TokenStream) -> TokenStream {
         }
     }
     .into()
+}
+
+struct MarkerAttrs {
+    data_name: String,
+}
+
+fn parse_marker_attr(ast: &DeriveInput, mut attrs: MarkerAttrs) -> Result<MarkerAttrs> {
+    let meta_items = bevy_macro_utils::parse_attrs(ast, MARKER)?;
+
+    for meta in meta_items {
+        use syn::{
+            Meta::NameValue,
+            NestedMeta::{Lit, Meta},
+        };
+        match meta {
+            Meta(NameValue(m)) if m.path == DATA_NAME => {
+                attrs.data_name = get_lit_str(DATA_NAME, &m.lit)?.value();
+            }
+            Meta(meta_item) => {
+                return Err(Error::new_spanned(
+                    meta_item.path(),
+                    format!(
+                        "unknown marker attribute `{}`",
+                        meta_item.path().into_token_stream()
+                    ),
+                ));
+            }
+            Lit(lit) => {
+                return Err(Error::new_spanned(
+                    lit,
+                    "unexpected literal in marker attribute",
+                ))
+            }
+        }
+    }
+
+    Ok(attrs)
 }
 
 pub(crate) fn bevy_ecs_path() -> syn::Path {
