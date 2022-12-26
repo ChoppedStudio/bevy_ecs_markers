@@ -1,3 +1,7 @@
+# 1.0.1
+
+* Add `#[marker]` attribute to `#[derive(EntityMarker)]`
+
 # 1.0.0
 
 * Split up MarkerData in smaller and custom traits

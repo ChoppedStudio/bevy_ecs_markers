@@ -17,6 +17,7 @@ enum Players {
 }
 
 #[derive(EntityMarker)]
+#[marker(data_name = "CurrentPlayerMarker")] // specify how the generated MarkerData struct should be called
 struct CurrentPlayer;
 
 #[derive(Component)]
